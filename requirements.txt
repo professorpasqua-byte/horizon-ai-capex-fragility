@@ -1,0 +1,11 @@
+duckdb
+polars
+pyarrow
+numpy
+pandas
+pydantic>=2
+scikit-learn
+streamlit
+pytest
+hypothesis
+ruff
