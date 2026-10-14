@@ -1,0 +1,18 @@
+layer,check,passed,detail
+bronze,budget_rows_present,True,20
+bronze,postmortems_rows_present,True,50
+bronze,staffing_rows_present,True,409
+bronze,survey_rows_present,True,96
+bronze,telemetry_rows_present,True,245089
+bronze,tickets_rows_present,True,6872
+silver,telemetry_no_duplicate_keys,True,
+silver,telemetry_no_sentinels,True,
+silver,telemetry_not_from_the_future,True,1.0000
+silver,ticket_ids_unique,True,
+silver,tickets_resolve_after_creation,True,
+silver,budget_amounts_positive,True,
+silver,staffing_one_current_per_week,True,
+gold,cluster_hour_grid_complete,True,"245,280 rows"
+gold,team_week_grid_complete,True,416 rows
+gold,telemetry_coverage_in_range,True,0.9943
+gold,staffing_known_after_first_delivery,True,0.0352 unknown (first deliveries lag the window start)
