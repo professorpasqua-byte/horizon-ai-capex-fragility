@@ -152,7 +152,7 @@ def build_incidents(cfg: SimConfig, world: dict, staffing: dict) -> dict:
     # Combine, sort by time, assign ids
     created = np.concatenate([created_inc, created_r])
     resolved = np.concatenate([resolved_inc, resolved_r])
-    resolved = np.where(resolved > end_of_window, np.datetime64("NaT"), resolved)
+    resolved = np.where(resolved > end_of_window, np.datetime64("NaT", "us"), resolved)
     t_team = np.concatenate([team_i[inc_idx], c_team[r_cluster]])
     t_cluster = np.concatenate([c_id[ci[inc_idx]], c_id[r_cluster]])
     t_type = np.concatenate([np.full(n_tk, "incident"), np.full(n_r, "routine")])
