@@ -1,0 +1,11 @@
+table_name,check_name,passed,detail
+gold_cluster_hour,one_row_per_cluster_hour,1,245280.0
+gold_cluster_hour,grid_complete,1,245280.0
+gold_cluster_hour,cpu_between_0_and_100,1,0.0
+gold_cluster_hour,no_missing_keys,1,0.0
+gold_cluster_hour,telemetry_coverage_between_95_and_100_percent,1,0.9943
+gold_cluster_hour,staffing_known_after_first_deliveries,1,0.0352
+gold_team_week,one_row_per_team_week,1,416.0
+gold_team_week,grid_complete,1,416.0
+gold_team_week,outage_counts_not_negative,1,0.0
+team_week_features,capacity_index_positive,1,0.3095
