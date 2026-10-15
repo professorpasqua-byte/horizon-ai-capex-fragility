@@ -1,0 +1,158 @@
+{
+  "tipping": {
+    "knot": 0.77,
+    "knot_ci": [
+      0.7,
+      0.8
+    ],
+    "width": 0.15,
+    "lag_weeks": 6,
+    "lag_ci": [
+      6,
+      6
+    ],
+    "rate_multiplier_at_full_strain": 8.0982,
+    "wear_coef": 1.9103,
+    "overdispersion": 1.0,
+    "lr_vs_no_tipping_point": 34.7829
+  },
+  "tipping_tickets_only": {
+    "knot": 0.76,
+    "knot_ci": [
+      0.72,
+      0.8
+    ],
+    "width": 0.1,
+    "lag_weeks": 6,
+    "lag_ci": [
+      6,
+      7
+    ],
+    "rate_multiplier_at_full_strain": 4.3919,
+    "wear_coef": 1.7972,
+    "overdispersion": 1.0328,
+    "lr_vs_no_tipping_point": 26.476
+  },
+  "early": {
+    "team_id": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "flag_week": [
+      23,
+      26,
+      37,
+      29,
+      38,
+      27,
+      -1,
+      -1
+    ],
+    "surge_week": [
+      39,
+      33,
+      47,
+      41,
+      -1,
+      50,
+      -1,
+      -1
+    ],
+    "lead_weeks": [
+      16.0,
+      7.0,
+      10.0,
+      12.0,
+      null,
+      23.0,
+      null,
+      null
+    ]
+  },
+  "gap": {
+    "team_id": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "episodes": [
+      38,
+      24,
+      19,
+      21,
+      8,
+      10,
+      7,
+      6
+    ],
+    "ticketed": [
+      36,
+      19,
+      11,
+      19,
+      5,
+      9,
+      4,
+      6
+    ],
+    "filing_rate": [
+      0.9474,
+      0.7917,
+      0.5789,
+      0.9048,
+      0.625,
+      0.9,
+      0.5714,
+      1.0
+    ],
+    "safety_score": [
+      3.1476,
+      2.4678,
+      2.1459,
+      3.717,
+      2.9559,
+      4.1366,
+      2.0977,
+      4.152
+    ],
+    "low_safety": [
+      false,
+      true,
+      true,
+      false,
+      true,
+      false,
+      true,
+      false
+    ],
+    "low_rate": 0.6724,
+    "high_rate": 0.9333,
+    "rate_gap": 0.2609,
+    "rate_gap_ci": [
+      0.1276,
+      0.3942
+    ],
+    "episodes_total": 133,
+    "unticketed_total": 24,
+    "incident_tickets_total": 194
+  },
+  "grading": {
+    "hits": 11,
+    "total": 13,
+    "misses": [
+      "tipping_point_ratio",
+      "tipping_point_interval_covers_truth"
+    ]
+  }
+}

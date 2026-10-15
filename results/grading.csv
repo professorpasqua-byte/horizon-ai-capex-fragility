@@ -1,0 +1,14 @@
+metric,found,truth,error,verdict,note
+tipping_point_ratio,0.809,0.72,0.08900000000000008,miss,the model's hinge starts later than the planted one
+tipping_point_interval_covers_truth,0.73 to 0.84,0.72,,miss,"interval is built on a proxy for workload, so it can be too narrow"
+lead_time_weeks,6,6.0,0,hit,
+lead_time_interval_covers_truth,6 to 6,6.0,,hit,
+outage_rate_multiplier,8.1,6.0,2.0999999999999996,hit,a smooth curve is fitted to what is really a straight ramp
+filing_rate_low_safety_teams,0.672,0.65,0.02200000000000002,hit,
+filing_rate_high_safety_teams,0.933,0.95,-0.016999999999999904,hit,
+low_safety_teams_identified_from_survey,1.0,1.0,0.0,hit,
+control_teams_falsely_flagged,0,0.0,0,hit,
+teams_flagged_before_true_hazard_rise,1.0,1.0,0.0,hit,hazard starts rising lag_weeks after the planted crossing
+warning_week_minus_true_crossing_week,-3.5,0.0,-3.5,hit,negative means the flag came before the planted crossing
+timezone_clusters_found,7,7.0,0,hit,
+telemetry_duplicates_removed,1217,1217.0,0,hit,

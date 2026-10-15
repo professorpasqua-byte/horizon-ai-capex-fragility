@@ -1,0 +1,9 @@
+team_id,episodes,ticketed,filing_rate,safety_score,low_safety
+0,38,36,0.9474,3.1476,False
+1,24,19,0.7917,2.4678,True
+2,19,11,0.5789,2.1459,True
+3,21,19,0.9048,3.717,False
+4,8,5,0.625,2.9559,True
+5,10,9,0.9,4.1366,False
+6,7,4,0.5714,2.0977,True
+7,6,6,1.0,4.152,False
