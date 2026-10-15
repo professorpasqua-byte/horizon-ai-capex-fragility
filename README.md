@@ -68,7 +68,7 @@ My two earlier projects looked at the people side of tech restructuring. Aegis a
 
 ## The psychology behind it
 
-I did not invent the human side. It comes from bodies of work that organizational psychologists have used for decades. In the simulation they are rules. In the analysis they are hypotheses to test.
+The human side rests on established theory from my own field. Each framework became a specific mechanism in the simulation, and the analysis then asks whether the data can pick that mechanism up.
 
 | Framework | The idea | What it became in Horizon |
 |---|---|---|
@@ -186,6 +186,26 @@ One lucky run proves nothing, so I ran all of it across 8 different simulated wo
 | Tipping point interval covers the truth | 4 |
 
 I would rather show you where my method misses than hide it. The tipping point is the weak spot. It is estimated from CPU use standing in for real workload, so it can drift, and its interval was too narrow in half the worlds. Early warning also uses a threshold estimated from the whole year, which makes the backtest more generous than a live system would be.
+
+---
+
+## What this means, and what to do about it
+
+**What is going on.** When a region moves budget into AI, two things happen together: the funded team gets smaller and the workload gets bigger. Staffing relative to demand falls. The first signs are the visible ones, overtime and a growing ticket backlog. This is the Job Demands-Resources pattern: demands up, resources down. Then people leave, and each departure makes the load heavier for those who stay, which is the loss spiral from Conservation of Resources theory. About six weeks after a team crosses the line, real outages start to climb. And the teams under the most strain, if they also feel unsafe, report less. Their ticket queue looks calmer than the truth.
+
+| What Horizon found | Why it happens | What the theory points to |
+|---|---|---|
+| Outages follow strain by about 6 weeks | Strain wears performance down gradually, it does not break it at once | Watch the leading signals (capacity against demand, overtime, backlog), not outage counts. There are weeks to act, not hours |
+| Overtime and backlog rise before outages | Resources run down, and effort is the first thing spent | Treat sustained overtime above a team's normal as a trigger to act, not as proof of commitment |
+| Losing people makes it worse | The loss spiral: fewer people, heavier load, more leavers | Backfill quickly in the teams that are stretched. A hiring freeze does the most damage where load is rising fastest |
+| Teams that feel unsafe stay quiet | Psychological safety decides whether problems get reported | Detect outages from system data, not from tickets. Make reporting low-risk with blameless post-mortems. Do not judge a team by its ticket count, because fewer tickets can mean less safety |
+| Budget moved in stages | A threshold effect: little changes, then a lot | Move budget in steps and re-measure capacity before the next step. Keep a protected comparison group of teams or regions |
+
+At the job level, the Job Demands-Resources model gives two levers. Lower the demands (narrower scope, lighter on-call load, fewer simultaneous projects) or add resources (more people, better tooling, more autonomy, real support). Doing neither while cutting the maintenance budget is the one option the model says will fail.
+
+The Budget view in the dashboard lets you see this directly: pick how much budget has moved into AI and see how teams looked at that level.
+
+**What I am not claiming.** These are the actions the theories point to, and Horizon shows the warning signals are detectable weeks ahead. It does not prove that acting on them would prevent a real outage. That would take real data and a proper intervention study.
 
 ---
 
