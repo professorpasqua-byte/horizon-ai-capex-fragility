@@ -10,7 +10,8 @@ A made-up tech company, a year of deliberately ugly data, and a project that gra
 
 [Live dashboard](https://horizon-ai-capex-fragility-3zizerbeayebfpyetyswac.streamlit.app/)
 
-**Project site:** https://professorpasqua-byte.github.io/horizon-ai-capex-fragility/
+**Project site:** https://professorpasqua-byte.github.io/horizon-ai-capex-fragility/ (coming soon)
+
 **Companion projects:** [Vanguard](https://github.com/professorpasqua-byte/vanguard-tech-ghost-badging) and [Aegis](https://github.com/professorpasqua-byte/aegis-systems-survival-analysis)
 
 ---
