@@ -1,10 +1,11 @@
 import streamlit as st
 
-from dashboard.data import episodes_by_region_week, findings, headline, read_csv
+from dashboard.data import episodes_by_region_week, findings, headline, lead_time_profile, tipping_profile
+from dashboard.style import INDIGO, REGION_COLORS, header
 
 st.set_page_config(page_title="Tipping point", layout="wide")
 h, f = headline(), findings()
-st.title("Where outages start to climb")
+header("Where outages start to climb", "The point where stretched teams start to fail, and how long after the strain it shows up.")
 
 c = st.columns(3)
 c[0].metric("Tipping point found", f"{h['tipping_ratio']:.2f}", help="Ratio of people to workload")
@@ -18,13 +19,13 @@ st.write(
 )
 
 st.subheader("How well each tipping point fits the data")
-prof = read_csv("tipping_profile.csv").set_index("knot")
-st.line_chart(prof.rename(columns={"loglik_drop": "fit (0 is best)"}))
-st.caption("Higher is a better fit. Points within about 2 of the top cannot be told apart.")
+st.line_chart(tipping_profile(), color=INDIGO)
+st.caption("Taller is a better fit. Anything within about 2 of the top cannot be told apart.")
 
 st.subheader("How long after the strain do outages respond")
-st.bar_chart(read_csv("lead_time_profile.csv").set_index("lag_weeks").rename(columns={"loglik_drop": "fit (0 is best)"}))
+st.bar_chart(lead_time_profile(), color=INDIGO)
+st.caption("The tallest bar is the best fit, in weeks.")
 
 st.subheader("Detected outages per week, by region")
-st.line_chart(episodes_by_region_week())
-st.caption(f"Overdispersion {f['tipping']['overdispersion']:.2f}. Outages are detected from telemetry, so they do not depend on anyone filing a ticket.")
+st.line_chart(episodes_by_region_week(), color=REGION_COLORS)
+st.caption(f"Four-week average. Overdispersion {f['tipping']['overdispersion']:.2f}. Outages are detected from telemetry, so they do not depend on anyone filing a ticket.")

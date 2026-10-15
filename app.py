@@ -1,15 +1,16 @@
 import streamlit as st
 
 from dashboard.data import headline, region_index_by_week
+from dashboard.style import KNOT_COLOR, REGION_COLORS, header
 
 st.set_page_config(page_title="Horizon: AI budget and infrastructure fragility", layout="wide")
 h = headline()
 
-st.title("Do stretched teams break systems?")
-st.write(
-    "Horizon is a fictional tech company with about 245,000 hourly infrastructure records, plus team "
-    "capacity, overtime, tickets and budget data. It moves budget from core maintenance into AI, region "
-    "by region. Because the simulation's real answer is known, this project grades its own findings."
+header(
+    "Do stretched teams break systems?",
+    "Horizon is a fictional tech company with about 245,000 hourly infrastructure records, plus team capacity, "
+    "overtime, tickets and budget data. It moves budget from core maintenance into AI, region by region. "
+    "The simulation's real answer is known, so this project grades its own findings.",
 )
 
 c = st.columns(4)
@@ -19,9 +20,9 @@ c[2].metric("Outages with no ticket", f"{h['unticketed']} of {h['episodes']}")
 c[3].metric("Self-grade", f"{h['hits']} of {h['total']}")
 
 st.subheader("Capacity against demand, by region")
-st.line_chart(region_index_by_week())
+st.line_chart(region_index_by_week(), color=REGION_COLORS + [KNOT_COLOR])
 st.caption(
-    "1.0 is where each team started. The three regions that move budget into AI fall one after another. "
-    "latam-central, the protected control region, holds steady."
+    "1.0 is where each team started. The three regions that move budget into AI fall one after another, "
+    "and the amber line is the tipping point. latam-central, the protected control region, holds steady."
 )
 st.info("Use the pages on the left: the tipping point, a budget view for executives, the ticket gap, and how the project grades itself.")

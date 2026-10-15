@@ -1,10 +1,11 @@
 import streamlit as st
 
 from dashboard.data import headline, team_filing
+from dashboard.style import INDIGO, header
 
 st.set_page_config(page_title="Ticket gap", layout="wide")
 h = headline()
-st.title("Outages that never become a ticket")
+header("Outages that never become a ticket", "Real outages, found in the telemetry, that nobody filed a ticket for.")
 
 c = st.columns(3)
 c[0].metric("Filed, low-safety teams", f"{h['low_rate'] * 100:.0f}%")
@@ -20,7 +21,7 @@ st.write(
 t = team_filing()
 t["team"] = ["team " + str(int(x)) for x in t.team_id]
 st.subheader("Filing rate by team")
-st.bar_chart(t.set_index("team")[["filing_rate"]])
+st.bar_chart(t.set_index("team")[["filing_rate"]], color=INDIGO)
 st.subheader("Survey safety score and outages")
 st.dataframe(t[["team", "episodes", "ticketed", "filing_rate", "safety_score", "low_safety"]].round(2))
 st.caption("Safety score is the team's average on a 1 to 5 scale. Below 3 counts as low.")

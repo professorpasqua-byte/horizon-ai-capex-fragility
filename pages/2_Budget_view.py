@@ -1,10 +1,11 @@
 import streamlit as st
 
 from dashboard.data import START_RATIO, budget_view, headline
+from dashboard.style import header
 
 st.set_page_config(page_title="Budget view", layout="wide")
 h = headline()
-st.title("What happens as budget moves into AI")
+header("What happens as budget moves into AI", "Pick how much of the budget moves into AI and see how the teams looked at that level.")
 
 view = budget_view()
 shares = [float(x) for x in view.index]

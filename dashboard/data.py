@@ -44,11 +44,25 @@ def region_index_by_week(results=RESULTS, with_knot=True):
     return wide
 
 
-def episodes_by_region_week(results=RESULTS):
+def episodes_by_region_week(results=RESULTS, window=4):
+    """Detected outages per week by region, as a rolling average so the pattern is readable."""
     ts = read_csv("team_signals.csv", results)
     wide = ts.groupby(["week_index", "region_id"]).detected_outage_episodes.sum().unstack()
     wide.columns = [REGION_NAMES[c] for c in wide.columns]
-    return wide
+    return wide.rolling(window, min_periods=1).mean()
+
+
+def _fit(frame, column):
+    p = frame.set_index(column).loglik_drop
+    return (p - p.min()).rename("fit (higher is better)").to_frame()
+
+
+def tipping_profile(results=RESULTS):
+    return _fit(read_csv("tipping_profile.csv", results), "knot")
+
+
+def lead_time_profile(results=RESULTS):
+    return _fit(read_csv("lead_time_profile.csv", results), "lag_weeks")
 
 
 def budget_view(results=RESULTS):

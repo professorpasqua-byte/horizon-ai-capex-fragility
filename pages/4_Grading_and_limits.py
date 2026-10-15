@@ -1,10 +1,11 @@
 import streamlit as st
 
 from dashboard.data import headline, read_csv
+from dashboard.style import header
 
 st.set_page_config(page_title="Grading and limits", layout="wide")
 h = headline()
-st.title("How the project grades itself")
+header("How the project grades itself", "Every finding is compared with the answer the simulation was built with, including the misses.")
 st.write(
     "The simulation was built with a known answer. After the models run, each finding is compared with it. "
     f"This run: {h['hits']} of {h['total']} checks hit."
