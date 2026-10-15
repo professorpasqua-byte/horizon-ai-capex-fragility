@@ -1,4 +1,5 @@
 import pathlib
+import re
 
 from dashboard import data
 from test_dashboard import results_dir
@@ -44,3 +45,16 @@ def test_style_module_compiles_and_every_page_uses_the_header():
         assert "header(" in text and "st.title" not in text, p
         compile(text, str(p), "exec")
     assert "[theme.sidebar]" in (ROOT / ".streamlit" / "config.toml").read_text()
+
+
+def test_readme_explains_every_file_and_covers_the_real_world_and_the_psychology():
+    text = (ROOT / "README.md").read_text()
+    files = [p for p in (ROOT / "src" / "horizon").rglob("*.py") if p.name != "__init__.py"]
+    files += [p for d in ("tests", "pages", "dashboard") for p in (ROOT / d).glob("*.py") if p.name != "__init__.py"]
+    files += list((ROOT / "sql").glob("*.sql")) + list((ROOT / "docs").glob("*.md"))
+    files += [ROOT / "app.py", ROOT / "pyproject.toml", ROOT / "requirements.txt"]
+    missing = sorted(p.name for p in files if not re.search(rf"[`/]{re.escape(p.name)}`", text))
+    assert not missing, missing
+    for word in ("Forrester", "AWS", "Azure", "Google Cloud", "Job Demands-Resources", "Conservation of Resources",
+                 "Edmondson", "Hobfoll", "as-of", "psychological safety"):
+        assert word in text, word
