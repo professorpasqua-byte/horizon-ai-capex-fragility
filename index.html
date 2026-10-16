@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#2B2A66">
+<title>Horizon: do stretched teams break systems?</title>
+<meta name="description" content="A fictional tech company, a year of deliberately messy data, and a project that grades its own answers. Industrial psychology meets data engineering.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--indigo:#2B2A66;--deep:#1B1A45;--mid:#524FA3;--light:#8583C6;--tint:#EFEFF8;--line:#C4C3E3;--amber:#E0A100;--ink:#1B1A45;--muted:#5B5A80}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:"Instrument Sans",system-ui,-apple-system,Segoe UI,sans-serif;color:var(--ink);background:#fff;line-height:1.62;font-size:17px;-webkit-text-size-adjust:100%}
+h1,h2,h3{font-family:Fraunces,Georgia,serif;line-height:1.14;margin:0 0 .55em;font-weight:700;letter-spacing:-.01em}
+h1{font-size:clamp(2rem,6.4vw,3.5rem)}
+h2{font-size:clamp(1.6rem,4.6vw,2.4rem)}
+h3{font-size:1.2rem}
+p{margin:0 0 1em}
+a{color:var(--mid)}
+.wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+.eyebrow{font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;font-weight:600;color:var(--light);margin-bottom:.9rem}
+.lede{font-size:1.15rem;max-width:44rem}
+section{padding:56px 0}
+.wave{display:block;width:100%;height:56px}
+/* top bar */
+.bar{position:sticky;top:0;z-index:20;background:var(--deep);color:#fff}
+.bar .wrap{display:flex;align-items:center;justify-content:space-between;height:56px}
+.brand{font-family:Fraunces,Georgia,serif;font-weight:700;font-size:1.15rem;color:#fff;text-decoration:none;letter-spacing:.02em}
+.bar nav{display:none;gap:22px}
+.bar nav a{color:#D9D8F0;text-decoration:none;font-size:.92rem}
+.bar nav a:hover{color:#fff}
+.bar details{position:relative}
+.bar summary{list-style:none;cursor:pointer;padding:8px 14px;border:1px solid #4a4989;border-radius:999px;font-size:.9rem}
+.bar summary::-webkit-details-marker{display:none}
+.bar details div{position:absolute;right:0;top:44px;background:var(--deep);border:1px solid #3b3a80;border-radius:14px;padding:10px;min-width:190px;display:flex;flex-direction:column}
+.bar details div a{color:#fff;text-decoration:none;padding:10px 12px;border-radius:8px}
+.bar details div a:hover{background:#2B2A66}
+@media(min-width:820px){.bar nav{display:flex}.bar details{display:none}}
+/* hero */
+.hero{background:var(--indigo);color:#fff;position:relative;overflow:hidden;padding:56px 0 24px}
+.hero .arcs{position:absolute;right:-180px;top:-120px;width:640px;height:640px;opacity:.5;pointer-events:none}
+.hero h1{color:#fff;max-width:46rem}
+.hero .lede{color:#D9D8F0}
+.btns{display:flex;flex-wrap:wrap;gap:12px;margin:22px 0 34px}
+.btn{display:inline-block;padding:13px 22px;border-radius:999px;font-weight:600;text-decoration:none;font-size:.98rem}
+.btn.solid{background:#fff;color:var(--indigo)}
+.btn.line{border:1.5px solid #8583C6;color:#fff}
+.card{background:#fff;color:var(--ink);border-radius:20px;padding:20px;box-shadow:0 18px 50px rgba(15,14,50,.28)}
+.card h3{font-size:1.05rem;margin-bottom:.2em}
+.card .sub{font-size:.88rem;color:var(--muted);margin-bottom:10px}
+#heroChart{width:100%;height:auto;display:block;touch-action:pan-y;cursor:crosshair}
+.chartbar{display:flex;align-items:center;gap:12px;margin-bottom:6px;flex-wrap:wrap}
+.play{background:var(--indigo);color:#fff;border:0;border-radius:999px;padding:9px 18px;font:600 .9rem "Instrument Sans",sans-serif;cursor:pointer}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.82rem;color:var(--muted)}
+.legend i{display:inline-block;width:18px;height:3px;border-radius:2px;vertical-align:middle;margin-right:6px}
+.read{margin-top:8px;font-size:.92rem;min-height:3.4em}
+.chip{display:inline-block;padding:2px 9px;border-radius:999px;font-size:.8rem;margin:2px 6px 2px 0;background:var(--tint)}
+.chip.bad{background:#FFF1CC;color:#7a5600}
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;padding:6px 0 10px}
+@media(min-width:760px){.stats{grid-template-columns:repeat(5,1fr)}}
+.stat{border-top:3px solid var(--indigo);padding-top:10px}
+.stat b{display:block;font-family:Fraunces,Georgia,serif;font-size:1.9rem;line-height:1.1;color:var(--indigo)}
+.stat span{font-size:.88rem;color:var(--muted)}
+/* grids */
+.grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.tile{background:#fff;border:1px solid var(--line);border-radius:18px;padding:20px}
+.tint .tile{border-color:transparent;box-shadow:0 6px 24px rgba(43,42,102,.08)}
+.tile small{display:block;color:var(--muted);font-size:.82rem;margin-bottom:.4em;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+.tile h3{font-size:1.08rem}
+.tile p{margin:0;font-size:.97rem}
+.tint{background:var(--tint)}
+.dark{background:var(--indigo);color:#fff}
+.dark .eyebrow{color:#B9B8E6}
+.dark h2,.dark h3{color:#fff}
+.dark .lede,.dark p{color:#E4E3F5}
+.dark .tile{background:#35347a;border-color:#4a4989}
+.dark .tile small{color:#B9B8E6}
+.dark .tile p{color:#E4E3F5}
+.callout{border-left:5px solid var(--amber);background:#FFF8E1;border-radius:0 16px 16px 0;padding:18px 20px;margin:26px 0;color:#4d3a00}
+.callout.in{background:var(--tint);border-color:var(--indigo);color:var(--ink)}
+.timeline{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));margin:24px 0}
+.ev{position:relative;background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px 18px 16px 22px}
+.ev:before{content:"";position:absolute;left:0;top:14px;bottom:14px;width:5px;border-radius:0 4px 4px 0;background:var(--indigo)}
+.ev b{display:block;font-family:Fraunces,Georgia,serif;font-size:1.02rem}
+.ev span{font-size:.92rem;color:var(--muted)}
+.two{display:grid;gap:24px;grid-template-columns:1fr}
+@media(min-width:860px){.two{grid-template-columns:1fr 1fr}}
+table{width:100%;border-collapse:collapse;font-size:.93rem}
+th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.hit,.miss{display:inline-block;padding:2px 10px;border-radius:999px;font-weight:600;font-size:.78rem}
+.hit{background:#E1F3E8;color:#14633a}
+.miss{background:#FFF1CC;color:#7a5600}
+.scroll{overflow-x:auto}
+/* bars */
+.bars{display:flex;align-items:flex-end;gap:6px;height:170px;margin:10px 0}
+.bars button{flex:1;border:0;background:var(--line);border-radius:6px 6px 0 0;cursor:pointer;min-height:4px;padding:0}
+.bars button.best{background:var(--indigo)}
+.bars button:hover{background:var(--mid)}
+.axis{display:flex;gap:6px;font-size:.75rem;color:var(--muted)}
+.axis span{flex:1;text-align:center}
+.hrow{display:grid;grid-template-columns:96px 1fr 56px;align-items:center;gap:10px;margin:7px 0;font-size:.9rem}
+.hrow .track{background:var(--tint);border-radius:999px;height:16px;overflow:hidden}
+.hrow .fill{height:100%;border-radius:999px}
+input[type=range]{width:100%;accent-color:var(--indigo)}
+.ok{color:#14633a;font-weight:600}
+/* flow */
+.flow{display:grid;gap:10px;grid-template-columns:1fr}
+@media(min-width:860px){.flow{grid-template-columns:repeat(5,1fr)}}
+.step{border-radius:16px;padding:16px;color:#fff}
+.step b{display:block;font-family:Fraunces,Georgia,serif;margin-bottom:4px}
+.step span{font-size:.88rem;opacity:.92}
+iframe{width:100%;height:640px;border:1px solid var(--line);border-radius:18px;background:#fff}
+.foot{background:var(--deep);color:#C9C8E8;padding:44px 0 36px}
+.foot h2,.foot h3{color:#fff}
+.foot a{color:#fff}
+.foot ul{padding-left:18px;margin:0 0 1em}
+.foot li{margin:.35em 0;font-size:.92rem}
+.links{display:flex;flex-wrap:wrap;gap:12px 22px;margin:18px 0}
+.small{font-size:.86rem;color:var(--muted)}
+.foot .small{color:#A9A8D6}
+</style>
+</head>
+<body>
+
+<header class="bar"><div class="wrap">
+  <a class="brand" href="#top">HORIZON</a>
+  <nav><a href="#story">The story</a><a href="#psychology">The psychology</a><a href="#build">How it is built</a><a href="#found">What it found</a><a href="#live">Dashboard</a><a data-link="email" href="#">Email</a></nav>
+  <details><summary>Menu</summary><div><a href="#story">The story</a><a href="#psychology">The psychology</a><a href="#build">How it is built</a><a href="#found">What it found</a><a href="#live">Dashboard</a><a data-link="email" href="#">Email</a></div></details>
+</div></header>
+
+<main id="top">
+<div class="hero">
+  <svg class="arcs" viewBox="0 0 640 640" fill="none" stroke="#8583C6" stroke-width="1.5" aria-hidden="true"><circle cx="320" cy="320" r="120"/><circle cx="320" cy="320" r="190"/><circle cx="320" cy="320" r="260"/><circle cx="320" cy="320" r="330"/><circle cx="320" cy="320" r="400"/></svg>
+  <div class="wrap" style="position:relative">
+    <div class="eyebrow">Industrial psychology meets data engineering</div>
+    <h1>The cloud failed in physical ways. Nobody could see whether the people running it were stretched thin.</h1>
+    <p class="lede">So I built a company where I could. I hid the answer inside a year of messy data, then made my own models try to find it. The project grades itself, including where it gets things wrong.</p>
+    <div class="btns"><a class="btn solid" data-link="app" href="#">Open the live dashboard</a><a class="btn line" data-link="repo" href="#">Read the code</a></div>
+    <div class="card">
+      <h3>Staffing against demand, week by week</h3>
+      <div class="sub">1.0 is where each team started. Drag across the chart, or press play and watch the year unfold.</div>
+      <div class="chartbar"><button class="play" id="play">Play the year</button><div class="legend" id="legend"></div></div>
+      <svg id="heroChart" role="img" aria-label="Capacity against demand for four regions across one simulated year"></svg>
+      <div class="read" id="heroRead"></div>
+    </div>
+  </div>
+</div>
+<svg class="wave" style="background:#2B2A66" viewBox="0 0 1440 80" preserveAspectRatio="none" aria-hidden="true"><path d="M0,30 C260,90 520,0 760,34 C1000,68 1220,90 1440,36 L1440,80 L0,80 Z" fill="#fff"/></svg>
+
+<div class="wrap"><div class="stats">
+  <div class="stat"><b>245,280</b><span>hourly infrastructure records</span></div>
+  <div class="stat"><b>6</b><span>messy source systems</span></div>
+  <div class="stat"><b>96</b><span>tests, warnings count as errors</span></div>
+  <div class="stat"><b>6 weeks</b><span>the delay the models found</span></div>
+  <div class="stat"><b>11 of 13</b><span>checks the project got right</span></div>
+</div></div>
+
+<section id="story"><div class="wrap">
+  <div class="eyebrow" style="color:var(--mid)">What actually happened</div>
+  <h2>Forrester saw it coming. Then 2026 happened.</h2>
+  <p class="lede">In its Predictions 2026 research, Forrester said to expect at least two major, multiday outages at the big cloud providers. The reason it gave was money. Budget was moving out of older infrastructure and into GPU data centers built for AI.</p>
+  <div class="timeline">
+    <div class="ev"><b>October 2025 &middot; AWS</b><span>A DNS fault around DynamoDB in US-EAST-1 caused knock-on trouble for most of a day.</span></div>
+    <div class="ev"><b>October 2025 &middot; Azure</b><span>Azure Front Door went down for about 8 hours.</span></div>
+    <div class="ev"><b>February 2026 &middot; Azure</b><span>A regional problem in West US ran past 20 hours.</span></div>
+    <div class="ev"><b>7 to 8 May 2026 &middot; AWS</b><span>A data hall in US-EAST-1 lost cooling. Full recovery took between 19 and 28 hours, depending on whose clock you use.</span></div>
+    <div class="ev"><b>15 July 2026 &middot; Google Cloud</b><span>A utility power fault took out cooling at a site in the Netherlands for roughly 12 to 15 hours.</span></div>
+    <div class="ev"><b>20 August 2026 &middot; Google Cloud</b><span>Planned fiber maintenance went wrong in us-west1 and automatic rerouting failed. 33 services were hit for 2 hours 22 minutes.</span></div>
+  </div>
+  <p class="small">Dates and durations come from outage trackers and trade press. The providers' own post-incident reports are the primary record. Whether this adds up to Forrester's "multiday" is a fair argument.</p>
+  <div class="callout"><b>The thing nobody publishes.</b> Every reported cause on that list is physical or procedural: cooling, power, cables, maintenance. Nobody published how many engineers were on shift, how much overtime they were working, or whether the ticket backlog was growing. That data is private, so from the outside you cannot ask whether stretched teams make failures more likely.</div>
+  <div class="callout in"><b>What I am not claiming.</b> I am not saying tired engineers caused any of these outages. The reported causes were physical. I am asking a narrower question: if a company wanted to watch this risk build inside its own teams, what would the data look like, and could it be seen early enough to matter?</div>
+  <p>This is the third project in a line. <a href="https://github.com/professorpasqua-byte/aegis-systems-survival-analysis">Aegis</a> asked whether low attrition after AI-linked layoffs means a healthy team or just people with nowhere to go. <a href="https://github.com/professorpasqua-byte/vanguard-tech-ghost-badging">Vanguard</a> asked whether a model can find a hidden tipping point and grade itself. Horizon puts them together.</p>
+</div></section>
+<svg class="wave" style="background:#fff" viewBox="0 0 1440 80" preserveAspectRatio="none" aria-hidden="true"><path d="M0,44 C240,0 500,88 760,44 C1020,0 1240,70 1440,30 L1440,80 L0,80 Z" fill="#EFEFF8"/></svg>
+
+<section class="tint" id="company"><div class="wrap">
+  <div class="eyebrow" style="color:var(--mid)">The fictional company</div>
+  <h2>So I built Horizon.</h2>
+  <p class="lede">Horizon Infrastructure Group runs 28 clusters in 4 regions, looked after by 8 site reliability teams, over one simulated year from October 2025 to September 2026. It is fictional, which means I control everything about it, including the answer.</p>
+  <div class="grid" style="margin:24px 0">
+    <div class="tile"><small>Region 1</small><h3>na-east</h3><p>Starts moving budget into AI in October to December 2025. First to be squeezed.</p></div>
+    <div class="tile"><small>Region 2</small><h3>eu-west</h3><p>Starts in January to March 2026.</p></div>
+    <div class="tile"><small>Region 3</small><h3>apac-south</h3><p>Starts in April to June 2026.</p></div>
+    <div class="tile"><small>Control</small><h3>latam-central</h3><p>Never moves any budget. If it ever sets off an alarm, the method is broken.</p></div>
+  </div>
+  <p>After a region starts, 5 more points of its total budget move to AI each quarter, up to 20. Core maintenance begins at 60% of the budget, so the funded team shrinks as that share does. Hiring freezes in a diverting region: a leaver is replaced at 8% of the gap per week instead of 30%. Meanwhile demand grows 8% over the year, plus extra load for every point of budget moved to AI.</p>
+  <h3 style="margin-top:30px">Four things I buried in it</h3>
+  <div class="grid">
+    <div class="tile"><small>The tipping point</small><h3>0.72</h3><p>Outage risk stays flat until a team's staffing falls below 72% of what its workload needs, then climbs over the next 10 points.</p></div>
+    <div class="tile"><small>The delay</small><h3>6 weeks</h3><p>Risk responds to how stretched the team was six weeks ago, not today. Strain wears people down gradually.</p></div>
+    <div class="tile"><small>The quiet teams</small><h3>35% vs 5%</h3><p>Teams that feel unsafe skip the ticket for 35% of real incidents. Teams that feel safe skip 5%.</p></div>
+    <div class="tile"><small>A rival suspect</small><h3>Wear</h3><p>Deferred maintenance from the budget cuts also raises outages, so people are not the only possible explanation.</p></div>
+  </div>
+</div></section>
+<svg class="wave" style="background:#EFEFF8" viewBox="0 0 1440 80" preserveAspectRatio="none" aria-hidden="true"><path d="M0,30 C300,86 560,0 820,40 C1080,80 1260,10 1440,44 L1440,80 L0,80 Z" fill="#2B2A66"/></svg>
+
+<section class="dark" id="psychology"><div class="wrap">
+  <div class="eyebrow">The psychology under the numbers</div>
+  <h2>None of the human side is guesswork.</h2>
+  <p class="lede">It rests on established theory from my own field. Each framework became a specific mechanism in the simulation, and the analysis then asks whether the data can pick that mechanism up.</p>
+  <div class="grid" style="margin-top:24px">
+    <div class="tile"><small>Demerouti, Bakker and colleagues, 2001</small><h3>Job Demands-Resources</h3><p>Strain builds when demands rise and the resources to meet them shrink. In Horizon, demand is the AI-driven workload and resources are funded headcount. Their ratio is the capacity-to-load ratio, and overtime is the strain signal.</p></div>
+    <div class="tile"><small>Hobfoll, 1989</small><h3>Conservation of Resources</h3><p>People protect what they have, losses hurt more than gains help, and losses feed on themselves. In Horizon, strain makes people leave, and every departure makes the remaining load heavier. That loop is built in.</p></div>
+    <div class="tile"><small>Edmondson, 1999</small><h3>Psychological safety</h3><p>Whether people feel safe admitting problems. Every Horizon team has a hidden safety level, and low-safety teams skip tickets. A monthly pulse survey measures it, with noise.</p></div>
+    <div class="tile"><small>Brockner and colleagues, 1980s</small><h3>Layoff survivors</h3><p>The people who stay carry extra load and worry. Hiring freezes and cuts start the moment a region begins moving budget, so the team that remains is smaller while demand grows.</p></div>
+  </div>
+  <p style="margin-top:20px">Two design choices came straight from this work. Strain wears people down, so outages respond weeks later and not at once. And losses tend to matter most past a critical point, so I used a threshold with a ramp and not a straight line. The numbers themselves, 0.72 and six weeks, are my assumptions, chosen to be plausible.</p>
+  <h2 style="margin-top:44px">What is going on, and what to do about it</h2>
+  <p>When a region moves budget into AI, the funded team gets smaller while the workload gets bigger. Staffing relative to demand falls. The first signs are overtime and a growing ticket backlog. Then people leave, and each departure loads the rest. About six weeks after a team crosses the line, real outages start to climb. And the teams under the most strain, if they also feel unsafe, report less, so their ticket queue looks calmer than the truth.</p>
+  <div class="grid">
+    <div class="tile"><small>Signal</small><h3>Watch the leading indicators</h3><p>Capacity against demand, overtime and backlog moved weeks before outages did. Track them, not just outage counts.</p></div>
+    <div class="tile"><small>Signal</small><h3>Overtime is a trigger</h3><p>Sustained overtime above a team's normal is a warning, not proof of commitment.</p></div>
+    <div class="tile"><small>Action</small><h3>Backfill fast where load rises</h3><p>A hiring freeze does the most damage on the teams whose demand is growing fastest.</p></div>
+    <div class="tile"><small>Action</small><h3>Do not trust ticket counts</h3><p>Detect outages from system data. Use blameless post-mortems so reporting is low-risk. Fewer tickets can mean less safety.</p></div>
+    <div class="tile"><small>Action</small><h3>Move budget in steps</h3><p>Re-measure capacity before each step, and keep a protected comparison group.</p></div>
+    <div class="tile"><small>Two levers</small><h3>Demands down or resources up</h3><p>Narrower scope and lighter on-call, or more people, better tooling and real support. Doing neither while cutting maintenance is the option the model says will fail.</p></div>
+  </div>
+  <p class="small" style="margin-top:16px;color:#B9B8E6">This shows the warning signals are detectable weeks ahead. It does not prove that acting on them would prevent a real outage. That would take real data and a proper intervention study.</p>
+</div></section>
+<svg class="wave" style="background:#2B2A66" viewBox="0 0 1440 80" preserveAspectRatio="none" aria-hidden="true"><path d="M0,40 C260,0 520,86 780,42 C1040,0 1240,60 1440,34 L1440,80 L0,80 Z" fill="#fff"/></svg>
+
+<section id="build"><div class="wrap">
+  <div class="eyebrow" style="color:var(--mid)">The engineering</div>
+  <h2>The data fights back.</h2>
+  <p class="lede">Real companies do not hand you clean tables. Each of Horizon's six sources arrives at its own pace with its own flaws, and a ledger records exactly what I broke so the cleaning can be graded.</p>
+  <div class="grid" style="margin:22px 0">
+    <div class="tile"><small>Telemetry &middot; near real time</small><p>723 exact duplicates, 494 restated readings, 1,198 missing, 472 sensor glitches, 4,974 arriving hours late. And 60,999 rows from apac-south logged in local time as if it were UTC.</p></div>
+    <div class="tile"><small>The monitors themselves</small><p>210 hours lost during severe outages, because monitoring goes quiet exactly when you need it most.</p></div>
+    <div class="tile"><small>Staffing &middot; weekly, days late</small><p>Team names spelled three ways, 13 missing weeks, restated rows, and -1 standing in for missing overtime.</p></div>
+    <div class="tile"><small>Budget &middot; quarterly</small><p>Money stored as text like $12.50M, and some quarters restated 45 days later.</p></div>
+    <div class="tile"><small>Tickets &middot; daily batch</small><p>One region stamped with a -03:00 offset, 68 duplicates, 190 blank severities, and root causes typed as free text.</p></div>
+    <div class="tile"><small>Pulse survey &middot; monthly</small><p>Scores hidden for any team with fewer than five responses, and noisy for the rest.</p></div>
+  </div>
+  <h3 style="margin-top:34px">A medallion pipeline</h3>
+  <div class="flow">
+    <div class="step" style="background:#7A7A8C"><b>Landing</b><span>The messy files, exactly as each system sends them.</span></div>
+    <div class="step" style="background:#524FA3"><b>Bronze</b><span>Taken in as delivered, with load metadata. Refuses any answer-key table.</span></div>
+    <div class="step" style="background:#3B3A80"><b>Silver</b><span>Cleaned. Timezone found from the data, duplicates removed, labels fixed.</span></div>
+    <div class="step" style="background:#2B2A66"><b>Gold</b><span>245,280 cluster-hours and 416 team-weeks, joined as of delivery date.</span></div>
+    <div class="step" style="background:#1B1A45"><b>SQL and models</b><span>DuckDB checks, three models, then grading against the hidden answer.</span></div>
+  </div>
+  <div class="two" style="margin-top:34px">
+    <div>
+      <h3>Time travel is not allowed</h3>
+      <p>The slowest sources describe the past and arrive late. A careless join would hand a model facts the company did not yet know, and the results would look brilliant for the wrong reason. So Horizon joins on the day each record was <b>delivered</b>, not the day it describes. When two versions of a week exist, the newest week wins. Try it: move the date and see what the company actually knew.</p>
+      <p class="small">A test checks 150 random points against a brute-force lookup.</p>
+    </div>
+    <div class="card" style="box-shadow:0 8px 30px rgba(43,42,102,.14);border:1px solid var(--line)">
+      <h3>One team's headcount</h3>
+      <div class="sub">Three HR records. Slide "today".</div>
+      <input type="range" id="asofDay" min="14" max="41" value="22" aria-label="Today">
+      <div class="read" id="asofRead"></div>
+    </div>
+  </div>
+  <div class="grid" style="margin-top:34px">
+    <div class="tile"><small>Strict as-of joins</small><p>Staffing, budget and survey data only ever show what was known at that moment. No row sees its own future.</p></div>
+    <div class="tile"><small>A SQL layer</small><p>DuckDB holds the gold tables. Three SQL files compute the capacity index with window functions and run 10 data-quality checks. A test confirms SQL and Python agree to within one billionth.</p></div>
+    <div class="tile"><small>96 tests</small><p>Warnings count as errors, and the whole suite runs on every push. It takes about 15 seconds.</p></div>
+    <div class="tile"><small>Guard rails</small><p>Tests fail if the pipeline or the models import the simulator or read the answer folder. The pipeline also runs 17 checks of its own every time.</p></div>
+    <div class="tile"><small>Fast by design</small><p>Vectorized, with no row-by-row loops. The in-memory run from bronze to gold over 245,280 rows takes about a third of a second.</p></div>
+    <div class="tile"><small>No black boxes</small><p>The models are plain NumPy: a Poisson regression with grid search and profile-likelihood intervals. No machine-learning libraries.</p></div>
+  </div>
+</div></section>
+<svg class="wave" style="background:#fff" viewBox="0 0 1440 80" preserveAspectRatio="none" aria-hidden="true"><path d="M0,34 C260,86 520,0 800,40 C1060,78 1260,6 1440,40 L1440,80 L0,80 Z" fill="#EFEFF8"/></svg>
+
+<section class="tint" id="found"><div class="wrap">
+  <div class="eyebrow" style="color:var(--mid)">What it found</div>
+  <h2>It found most of what I buried.</h2>
+  <p class="lede">Three models went looking: one for the tipping point and the delay, one for early warning, one for the gap between real outages and tickets. Then the project marked its own work against the hidden answer.</p>
+  <div class="two" style="margin-top:26px">
+    <div class="card" style="box-shadow:0 8px 30px rgba(43,42,102,.12)">
+      <h3>How long after strain do outages respond?</h3>
+      <div class="sub">The tallest bar is the best fit. I buried 6 weeks. Tap a bar.</div>
+      <div class="bars" id="leadBars"></div><div class="axis" id="leadAxis"></div>
+      <div class="read" id="leadRead"></div>
+    </div>
+    <div class="card" style="box-shadow:0 8px 30px rgba(43,42,102,.12)">
+      <h3>Who files a ticket for a real outage?</h3>
+      <div class="sub">Outages found in the telemetry, matched to tickets. Amber teams report low safety in the survey.</div>
+      <div id="filing"></div>
+      <div class="read"><b>Low-safety teams filed 67%. High-safety teams filed 93%.</b> I planted 65% and 95%. The survey picked out all 8 teams correctly.</div>
+    </div>
+  </div>
+  <h3 style="margin-top:34px">The scorecard</h3>
+  <div class="scroll"><table id="score"><thead><tr><th>Check</th><th>Found</th><th>Truth</th><th></th></tr></thead><tbody></tbody></table></div>
+  <p class="small" style="margin-top:12px">One lucky run proves nothing, so I ran everything across 8 different simulated worlds. The average was 11.0 of 13.</p>
+  <div class="scroll"><table id="sweep"><thead><tr><th>Check</th><th>Worlds hit, of 8</th></tr></thead><tbody></tbody></table></div>
+</div></section>
+<svg class="wave" style="background:#EFEFF8" viewBox="0 0 1440 80" preserveAspectRatio="none" aria-hidden="true"><path d="M0,38 C280,0 540,84 800,40 C1060,4 1260,70 1440,34 L1440,80 L0,80 Z" fill="#fff"/></svg>
+
+<section id="miss"><div class="wrap">
+  <div class="eyebrow" style="color:var(--mid)">The honest part</div>
+  <h2>Where it got it wrong.</h2>
+  <p class="lede">The tipping point. The model put it at 0.81. The truth was 0.72.</p>
+  <div class="two" style="margin-top:20px">
+    <div>
+      <p>It is the weak spot, and I would rather show you than hide it. The analysis cannot see true workload, so CPU use stands in for it. That stand-in drifts, and the interval it produces was too narrow in half of my simulated worlds. The tipping point landed within 0.05 of the truth in 5 of 8 worlds.</p>
+      <p>Early warning has a softer flaw too. Its threshold is estimated from the whole year, which makes the backtest more generous than a live system would be.</p>
+      <p>Everything here is synthetic. It says nothing about any real company, and nothing about what caused any real outage.</p>
+    </div>
+    <div class="card" style="box-shadow:0 8px 30px rgba(43,42,102,.12);border:1px solid var(--line)">
+      <h3>How well each tipping point fits</h3>
+      <div class="sub">Taller is a better fit. Anything near the top cannot be told apart.</div>
+      <svg id="fitChart" viewBox="0 0 520 250" style="width:100%;height:auto" role="img" aria-label="Fit of each candidate tipping point, with the found and planted values marked"></svg>
+    </div>
+  </div>
+</div></section>
+
+<section id="live" style="padding-top:10px"><div class="wrap">
+  <div class="eyebrow" style="color:var(--mid)">Try it yourself</div>
+  <h2>The live dashboard.</h2>
+  <p>Five pages: the tipping point, a budget slider for executives, the ticket gap, and the full scorecard with the data-quality checks.</p>
+  <div id="frameBox"></div>
+  <div class="links"><a class="btn solid" style="background:var(--indigo);color:#fff" data-link="app" href="#">Open full screen</a><a class="btn line" style="color:var(--indigo);border-color:var(--indigo)" data-link="repo" href="#">GitHub repository</a></div>
+</div></section>
+<svg class="wave" style="background:#fff" viewBox="0 0 1440 80" preserveAspectRatio="none" aria-hidden="true"><path d="M0,40 C300,0 560,86 820,44 C1080,2 1260,70 1440,36 L1440,80 L0,80 Z" fill="#1B1A45"/></svg>
+</main>
+
+<footer class="foot"><div class="wrap">
+  <h2>Sources and references</h2>
+  <div class="two">
+    <div>
+      <h3>The real world</h3>
+      <ul>
+        <li><a href="https://www.forrester.com/blogs/predictions-2026-cloud-outages-private-ai-on-private-clouds-and-the-rise-of-the-neoclouds">Forrester: Predictions 2026, cloud outages and the rise of the neoclouds</a></li>
+        <li><a href="https://tech-insider.org/aws-outage-us-east-1-2026/">AWS US-EAST-1, May 2026</a></li>
+        <li><a href="https://shattered.io/google-cloud-outage-33-services-2026/">Google Cloud us-west1, August 2026, with a 2026 comparison of AWS and Azure incidents</a></li>
+        <li><a href="https://baxtel.com/news/power-and-cooling-failure-causes-google-cloud-outage-in-netherlands">Google Cloud europe-west4, July 2026</a></li>
+        <li><a href="https://www.theregister.com/tag/outage">The Register: outage coverage</a></li>
+      </ul>
+    </div>
+    <div>
+      <h3>The psychology</h3>
+      <ul>
+        <li>Demerouti, Bakker, Nachreiner and Schaufeli (2001). The job demands-resources model of burnout. <i>Journal of Applied Psychology</i>.</li>
+        <li>Bakker and Demerouti (2007). The job demands-resources model: state of the art. <i>Journal of Managerial Psychology</i>.</li>
+        <li>Hobfoll (1989). Conservation of resources. <i>American Psychologist</i>.</li>
+        <li>Edmondson (1999). Psychological safety and learning behavior in work teams. <i>Administrative Science Quarterly</i>.</li>
+        <li>Brockner and colleagues (1980s). Research on employees who remain after layoffs.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="links"><a data-link="repo" href="#">GitHub</a><a data-link="app" href="#">Live dashboard</a><a data-link="linkedin" href="#">LinkedIn</a><a data-link="email" href="#">Email</a></div>
+  <p class="small">Horizon is entirely fictional, and every figure in the project describes a simulation I designed. Outage dates and durations come from secondary sources and may differ from the providers' own reports. Built with Python, NumPy, Polars, DuckDB, PyArrow, Streamlit and GitHub Actions.</p>
+</div></footer>
+
+<script>
+const LINKS={app:"https://horizon-ai-capex-fragility-3zizerbeayebfpyetyswac.streamlit.app/",repo:"https://github.com/professorpasqua-byte/horizon-ai-capex-fragility",linkedin:"https://www.linkedin.com/in/martins-nwafor-4b089243a/",email:"nwaforchubby@gmail.com"};
+const D={"idx":{"na-east":[1.058,1.01,0.966,0.966,0.97,0.966,0.963,0.958,0.965,0.964,0.964,0.956,0.949,0.958,0.923,0.846,0.843,0.837,0.836,0.835,0.84,0.831,0.832,0.83,0.792,0.792,0.764,0.725,0.724,0.724,0.76,0.72,0.719,0.682,0.675,0.683,0.683,0.68,0.678,0.653,0.613,0.621,0.613,0.611,0.574,0.536,0.572,0.571,0.575,0.568,0.567,0.608],"eu-west":[0.999,0.999,1.0,1.002,0.993,1.002,0.997,0.978,0.976,0.985,0.91,0.927,0.989,0.982,0.935,0.948,0.933,0.946,0.927,0.928,0.931,0.927,0.935,0.923,0.93,0.922,0.894,0.786,0.783,0.78,0.73,0.723,0.73,0.734,0.736,0.678,0.678,0.676,0.672,0.653,0.601,0.593,0.641,0.486,0.433,0.435,0.438,0.431,0.433,0.432,0.43,0.433],"apac-south":[0.972,1.035,1.004,0.989,0.956,0.957,0.959,0.953,0.986,0.999,0.993,0.994,0.985,0.982,0.978,0.945,0.936,0.945,0.979,0.982,0.974,0.98,0.925,0.979,0.968,0.969,0.876,0.821,0.78,0.788,0.792,0.782,0.78,0.773,0.781,0.78,0.78,0.782,0.775,0.707,0.715,0.712,0.674,0.66,0.638,0.645,0.68,0.676,0.664,0.68,0.671,0.645],"latam-central":[1.003,1.011,0.993,0.994,1.0,1.002,1.011,0.996,0.987,0.995,0.988,0.986,0.976,0.98,0.983,0.973,0.991,0.986,0.976,0.962,0.907,0.913,0.906,0.977,0.965,0.966,0.97,0.965,0.97,1.024,0.967,0.958,0.966,0.956,0.964,0.957,0.952,0.888,0.95,0.94,0.947,0.941,0.903,0.944,0.94,0.943,0.947,0.942,0.941,0.883,0.878,0.883]},"ep":{"na-east":[1.0,1.0,0.67,0.75,0.5,0.25,0.25,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.5,0.5,0.5,0.5,0.0,0.25,0.25,0.25,0.25,0.0,0.25,0.75,1.25,1.25,1.0,0.5,0.5,0.5,1.25,1.25,1.0,1.0,0.75,1.75,2.0,2.25,3.25,2.5,3.25,4.0,3.5,4.75,4.75,4.75,4.0],"eu-west":[1.0,0.5,0.33,0.75,0.75,0.75,1.0,0.5,0.25,0.25,0.0,0.0,0.25,0.5,0.5,0.5,0.25,0.0,0.0,0.0,0.0,0.0,0.25,0.25,0.25,0.5,0.25,0.25,0.5,0.25,0.25,0.25,0.0,0.0,0.0,0.0,0.0,0.5,0.5,0.5,0.5,0.5,0.5,0.5,1.25,1.0,1.25,2.75,2.25,3.25,4.75,3.75],"apac-south":[0.0,0.0,0.0,0.25,0.5,0.75,0.75,0.5,0.25,0.0,0.25,0.25,0.25,0.25,0.25,0.25,0.5,0.5,0.25,0.25,0.5,0.75,1.0,1.25,0.75,0.5,0.25,0.0,0.0,0.0,0.0,0.0,0.25,0.25,0.25,0.25,0.0,0.0,0.0,0.25,0.25,0.25,0.5,0.25,0.25,0.25,0.0,0.0,0.0,0.5,1.0,1.0],"latam-central":[0.0,0.0,0.0,0.0,0.25,0.25,0.25,0.25,0.0,0.0,0.25,0.25,0.5,0.75,0.5,0.5,0.25,0.0,0.0,0.0,0.0,0.25,0.25,0.5,0.5,0.25,0.5,0.25,0.25,0.5,0.25,0.25,0.25,0.0,0.0,0.0,0.25,0.25,0.25,0.25,0.25,0.25,0.5,0.5,0.25,0.25,0.0,0.25,0.25,0.25,0.25,0.25]},"knot":0.77,"found_ratio":0.81,"planted_ratio":0.72,"lead":[[0,3.81],[1,4.49],[2,4.26],[3,4.41],[4,6.73],[5,7.11],[6,12.37],[7,8.92],[8,3.12],[9,3.81],[10,3.85],[11,1.49],[12,0.0]],"tip":[[0.42,0.49],[0.43,0.48],[0.441,0.47],[0.452,0.48],[0.462,0.5],[0.473,0.51],[0.483,0.51],[0.493,0.52],[0.504,0.52],[0.514,0.52],[0.525,0.52],[0.536,0.51],[0.546,0.51],[0.557,0.45],[0.567,0.39],[0.578,0.33],[0.588,0.54],[0.598,0.84],[0.609,1.24],[0.619,2.67],[0.63,3.64],[0.64,3.38],[0.651,3.07],[0.662,2.69],[0.672,3.47],[0.683,4.61],[0.693,6.07],[0.704,8.55],[0.714,10.4],[0.724,11.5],[0.735,12.03],[0.745,12.13],[0.756,12.94],[0.766,13.66],[0.777,13.73],[0.788,13.54],[0.798,13.66],[0.809,13.9],[0.819,13.4],[0.83,12.36],[0.84,12.04],[0.851,11.32],[0.861,10.46],[0.871,9.5],[0.882,9.44],[0.892,9.18],[0.903,8.75],[0.913,8.36],[0.924,7.77],[0.935,7.03],[0.945,6.22],[0.956,5.26],[0.966,4.32],[0.977,3.29],[0.987,3.18],[0.997,3.08],[1.008,2.69],[1.018,1.93],[1.029,1.03],[1.04,0.42],[1.05,0.0]],"teams":[{"id":0,"eps":38,"ticketed":36,"rate":0.95,"safety":3.15,"low":false},{"id":1,"eps":24,"ticketed":19,"rate":0.79,"safety":2.47,"low":true},{"id":2,"eps":19,"ticketed":11,"rate":0.58,"safety":2.15,"low":true},{"id":3,"eps":21,"ticketed":19,"rate":0.9,"safety":3.72,"low":false},{"id":4,"eps":8,"ticketed":5,"rate":0.62,"safety":2.96,"low":true},{"id":5,"eps":10,"ticketed":9,"rate":0.9,"safety":4.14,"low":false},{"id":6,"eps":7,"ticketed":4,"rate":0.57,"safety":2.1,"low":true},{"id":7,"eps":6,"ticketed":6,"rate":1.0,"safety":4.15,"low":false}]};
+const $=(s,r=document)=>r.querySelector(s);
+const NS="http://www.w3.org/2000/svg";
+function S(tag,a,parent){const e=document.createElementNS(NS,tag);for(const k in a)e.setAttribute(k,a[k]);if(parent)parent.appendChild(e);return e}
+document.querySelectorAll("[data-link]").forEach(a=>{const k=a.dataset.link;a.href=k==="email"?"mailto:"+LINKS.email:LINKS[k];if(k!=="email")a.target="_blank";a.rel="noopener"});
+
+/* hero chart */
+(function(){
+  const svg=$("#heroChart"),W=700,H=330,L=46,R=14,T=14,B=34,names=Object.keys(D.idx);
+  const cols=["#2B2A66","#5B58B8","#8E8CD6","#7A7A8C"],lab=["na-east","eu-west","apac-south","latam-central (control)"];
+  const n=D.idx[names[0]].length,ymin=0.4,ymax=1.1;
+  const X=w=>L+(W-L-R)*w/(n-1),Y=v=>T+(H-T-B)*(ymax-v)/(ymax-ymin);
+  svg.setAttribute("viewBox",`0 0 ${W} ${H}`);
+  [0.5,0.6,0.7,0.8,0.9,1.0].forEach(v=>{S("line",{x1:L,x2:W-R,y1:Y(v),y2:Y(v),stroke:"#E3E2F2"},svg);S("text",{x:L-8,y:Y(v)+4,"text-anchor":"end","font-size":11,fill:"#5B5A80"},svg).textContent=v.toFixed(1)});
+  [[0,"Oct 2025"],[13,"Jan"],[26,"Apr"],[39,"Jul"]].forEach(([w,t])=>S("text",{x:X(w),y:H-10,"text-anchor":w?"middle":"start","font-size":11,fill:"#5B5A80"},svg).textContent=t);
+  [[0,"na-east starts"],[13,"eu-west starts"],[26,"apac-south starts"]].forEach(([w,t],i)=>{S("line",{x1:X(w),x2:X(w),y1:T,y2:H-B,stroke:"#C4C3E3","stroke-dasharray":"3 4"},svg);S("text",{x:X(w)+4,y:T+11+i*12,"font-size":10,fill:"#5B5A80"},svg).textContent=t});
+  S("line",{x1:L,x2:W-R,y1:Y(D.knot),y2:Y(D.knot),stroke:"#E0A100","stroke-width":2,"stroke-dasharray":"7 5"},svg);
+  S("text",{x:W-R-4,y:Y(D.knot)-6,"text-anchor":"end","font-size":11,"font-weight":600,fill:"#9a6e00"},svg).textContent="tipping point found";
+  names.forEach((k,i)=>{S("path",{d:D.idx[k].map((v,w)=>(w?"L":"M")+X(w).toFixed(1)+","+Y(v).toFixed(1)).join(""),fill:"none",stroke:cols[i],"stroke-width":i===3?2.2:3,"stroke-linecap":"round","stroke-linejoin":"round","stroke-dasharray":i===3?"2 5":"0"},svg)});
+  const cur=S("line",{y1:T,y2:H-B,stroke:"#1B1A45","stroke-width":1.5},svg),dots=names.map((k,i)=>S("circle",{r:5,fill:cols[i],stroke:"#fff","stroke-width":2},svg));
+  $("#legend").innerHTML=lab.map((t,i)=>`<span><i style="background:${cols[i]}"></i>${t}</span>`).join("")+`<span><i style="background:#E0A100"></i>tipping point</span>`;
+  const fmt=w=>new Date(Date.UTC(2025,9,1+7*w)).toLocaleDateString("en-GB",{day:"numeric",month:"short",timeZone:"UTC"});
+  function show(w){const x=X(w);cur.setAttribute("x1",x);cur.setAttribute("x2",x);
+    names.forEach((k,i)=>{dots[i].setAttribute("cx",x);dots[i].setAttribute("cy",Y(D.idx[k][w]))});
+    $("#heroRead").innerHTML=`<b>Week of ${fmt(w)}</b><br>`+names.map((k,i)=>{const v=D.idx[k][w],bad=v<D.knot;return `<span class="chip${bad?" bad":""}">${lab[i].split(" ")[0]} ${v.toFixed(2)}${bad?" below the line":""}</span>`}).join("")}
+  const move=e=>{const r=svg.getBoundingClientRect();show(Math.max(0,Math.min(n-1,Math.round(((e.clientX-r.left)/r.width*W-L)/(W-L-R)*(n-1)))))};
+  svg.addEventListener("pointermove",move);svg.addEventListener("pointerdown",move);
+  let timer=null,wk=0;const btn=$("#play");
+  btn.onclick=()=>{if(timer){clearInterval(timer);timer=null;btn.textContent="Play the year";return}
+    wk=0;btn.textContent="Pause";timer=setInterval(()=>{show(wk);wk++;if(wk>=n){clearInterval(timer);timer=null;btn.textContent="Play again"}},110)};
+  show(n-1);
+})();
+
+/* lead time bars */
+(function(){
+  const max=Math.max(...D.lead.map(p=>p[1])),box=$("#leadBars"),ax=$("#leadAxis");
+  const say=p=>{$("#leadRead").innerHTML=`<b>${p[0]} week${p[0]===1?"":"s"}:</b> ${p[1]===max?"the best fit. This is the delay the model found.":"fit "+p[1].toFixed(1)+" against "+max.toFixed(1)+" for the best."}`};
+  D.lead.forEach(p=>{const b=document.createElement("button");b.style.height=Math.max(3,p[1]/max*100)+"%";if(p[1]===max)b.className="best";b.setAttribute("aria-label",p[0]+" weeks");b.onclick=b.onmouseenter=()=>say(p);box.appendChild(b);
+    const s=document.createElement("span");s.textContent=p[0];ax.appendChild(s)});
+  say(D.lead.find(p=>p[1]===max));
+})();
+
+/* filing rates */
+(function(){
+  $("#filing").innerHTML=D.teams.slice().sort((a,b)=>a.safety-b.safety).map(t=>`<div class="hrow"><span>Team ${t.id}<br><span class="small">safety ${t.safety.toFixed(1)}</span></span><div class="track"><div class="fill" style="width:${t.rate*100}%;background:${t.low?"#E0A100":"#2B2A66"}"></div></div><b>${Math.round(t.rate*100)}%</b></div>`).join("");
+})();
+
+/* scorecard */
+(function(){
+  const rows=[["Tipping point (ratio)","0.81","0.72",0],["Tipping point interval covers the truth","0.73 to 0.84","0.72",0],["Delay between strain and outages","6 weeks","6 weeks",1],["Delay interval covers the truth","6 to 6","6",1],["Outage rate multiplier at full strain","8.1x","6x",1],["Filing rate, low-safety teams","67%","65%",1],["Filing rate, high-safety teams","93%","95%",1],["Low-safety teams identified from the survey","8 of 8","8 of 8",1],["Control teams falsely flagged","0","0",1],["Teams flagged before the true risk rose","100%","100%",1],["Warning week against true crossing week","3.5 weeks early","0",1],["Timezone-shifted clusters found","7","7",1],["Telemetry duplicates removed","1,217","1,217",1]];
+  $("#score tbody").innerHTML=rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td><span class="${r[3]?"hit":"miss"}">${r[3]?"Hit":"Miss"}</span></td></tr>`).join("");
+  const sw=[["Filing rates, survey identification, timezone fix, duplicates",8],["Delay interval covers the truth",8],["Delay within a week of the truth",7],["No false alarm on the control region",7],["Teams flagged before the true risk rose",6],["Warning week close to the true crossing",6],["Tipping point within 0.05 of the truth",5],["Outage rate multiplier",5],["Tipping point interval covers the truth",4]];
+  $("#sweep tbody").innerHTML=sw.map(r=>`<tr><td>${r[0]}</td><td><b>${r[1]}</b></td></tr>`).join("");
+})();
+
+/* fit chart */
+(function(){
+  const svg=$("#fitChart"),W=520,H=250,L=14,R=14,T=26,B=34,xs=D.tip.map(p=>p[0]),max=Math.max(...D.tip.map(p=>p[1]));
+  const x0=xs[0],x1=xs[xs.length-1],X=v=>L+(W-L-R)*(v-x0)/(x1-x0),Y=v=>T+(H-T-B)*(1-v/max);
+  S("path",{d:D.tip.map((p,i)=>(i?"L":"M")+X(p[0]).toFixed(1)+","+Y(p[1]).toFixed(1)).join(""),fill:"none",stroke:"#2B2A66","stroke-width":3},svg);
+  [[0.72,"planted 0.72","#1B1A45","5 4",-1],[D.found_ratio,"found "+D.found_ratio.toFixed(2),"#E0A100","0",1]].forEach(([v,t,c,d,s])=>{
+    S("line",{x1:X(v),x2:X(v),y1:T,y2:H-B,stroke:c,"stroke-width":2.5,"stroke-dasharray":d},svg);
+    S("text",{x:X(v)+s*6,y:T-8,"text-anchor":s>0?"start":"end","font-size":12,"font-weight":600,fill:c==="#E0A100"?"#9a6e00":c},svg).textContent=t});
+  [0.5,0.7,0.9].forEach(v=>S("text",{x:X(v),y:H-10,"text-anchor":"middle","font-size":11,fill:"#5B5A80"},svg).textContent=v.toFixed(1));
+  S("text",{x:W/2,y:H-24,"text-anchor":"middle","font-size":10,fill:"#5B5A80"},svg).textContent="candidate tipping point (ratio)";
+})();
+
+/* as-of join demo */
+(function(){
+  const ev=[{n:"week ending 12 Oct",d:20,w:12,h:12},{n:"week ending 19 Oct",d:27,w:19,h:11},{n:"week ending 12 Oct, corrected",d:35,w:12,h:10}];
+  const fmt=d=>d<=31?d+" Oct":(d-31)+" Nov",sl=$("#asofDay");
+  function go(){const t=+sl.value,known=ev.filter(e=>e.d<=t);
+    const pick=known.slice().sort((a,b)=>b.w-a.w||b.d-a.d)[0];
+    $("#asofRead").innerHTML=`<b>Today is ${fmt(t)}.</b><br>`+ev.map(e=>`<span class="chip${e.d<=t?"":" bad"}">${e.n}: ${e.h} people, sent ${fmt(e.d)}${e.d<=t?"":" (not here yet)"}</span>`).join("<br>")+`<br><b>The as-of join answers: ${pick?pick.h+" people":"nothing known yet"}</b>`+(pick&&t<35?`<br><span class="small">A careless join on the week alone would say 10, using a correction nobody had sent yet.</span>`:"")}
+  sl.oninput=go;go();
+})();
+
+/* live dashboard */
+(function(){
+  const box=$("#frameBox");
+  if(LINKS.app.includes("YOUR-APP")){box.innerHTML='<div class="callout in">The live dashboard will appear here once the link is set at the top of this page\'s script.</div>';return}
+  const f=document.createElement("iframe");f.src=LINKS.app+"/?embed=true";f.title="Horizon live dashboard";f.loading="lazy";box.appendChild(f);
+})();
+</script>
+</body>
+</html>
