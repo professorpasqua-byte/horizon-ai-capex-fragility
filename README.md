@@ -30,7 +30,7 @@ I am an industrial psychologist, so that is the part I wanted to test. There is 
 | Source systems | 6, each arriving at its own speed and broken in its own way |
 | Architecture | Bronze, silver and gold layers (medallion), plus a DuckDB layer with SQL checks |
 | Join logic | Strict as-of joins on delivery date, so no row knows anything from its own future |
-| Tests | 95, warnings treated as errors, run on every push |
+| Tests | 96, warnings treated as errors, run on every push |
 | Models | 3, all graded against a hidden answer key |
 | Result | 11 of 13 checks hit, 2 honest misses |
 
@@ -228,7 +228,7 @@ The Budget view in the dashboard lets you see this directly: pick how much budge
     |-- dashboard/           small helpers the pages use
     |-- src/horizon/         all the project code
     |-- sql/                 the SQL layer
-    |-- tests/               95 tests
+    |-- tests/               96 tests
     |-- docs/                data dictionary and method notes
     |-- results/             small result files the dashboard reads
     |-- .github/workflows/   automatic test run
